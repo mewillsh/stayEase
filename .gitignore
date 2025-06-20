@@ -35,3 +35,6 @@ coverage/
 
 # Build output (if any)
 dist/
+
+# removing notes
+notes/

@@ -24,6 +24,7 @@ app.set("views",path.join(__dirname,"views")); //go to views folder for ejs
 app.use(express.urlencoded({extended:true}));//to parse data came in URL
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
+app.use(express.static(path.join(__dirname,"public")));
 
 app.get("/",(req,res)=>{
     res.send("Hi, I am root");

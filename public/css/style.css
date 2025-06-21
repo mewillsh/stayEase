@@ -1,3 +1,12 @@
-*{
-  background-color: pink;
+/* Navbar */
+.navbar{
+  height: 5rem;
+  background-color: white;
+}
+.fa-bed{
+  color:#fe424d;
+  font-size: 2rem;
+}
+.nav-link{
+  color:#222222 !important;
 }

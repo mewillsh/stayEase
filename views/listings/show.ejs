@@ -1,13 +1,31 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <h1>Title <%=listing.title%></h1>
-    <ul>
-      <li><%=listing.description%></li>
-       <li>&#8377;<%=listing.price.toLocaleString("en-IN")%></li> <!--to write the numbers and their comma according to Indian standard -->
-      <li><%=listing.location%></li>
-      <li><%=listing.country%></li>
-    </ul>
-    <br>
-    <a href="/listings/<%=listing._id%>/edit">Edit this Listing</a><br><br>
-    <form action="/listings/<%=listing._id%>?_method=DELETE" method="post"><button>DELETE</button></form>
-</body>
+
+<div class="container mt-5">
+  <h2 class="text-center mb-4">Listing Details</h2>
+
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+
+      <div class="show-card p-4">
+        <img src="<%= listing.image.url %>" class="show-img mb-4" alt="listing image">
+
+        <h3 class="fw-semibold mb-3"><%= listing.title %></h3>
+        <p class="text-muted fs-6 mb-4"><%= listing.description %></p>
+
+        <div class="listing-info mb-4">
+          <p><strong>Price:</strong> ₹<%= listing.price.toLocaleString("en-IN") %></p>
+          <p><strong>Location:</strong> <%= listing.location %></p>
+          <p><strong>Country:</strong> <%= listing.country %></p>
+        </div>
+
+        <div class="d-flex gap-3">
+          <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn px-4">Edit</a>
+          <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-outline-danger px-4" onclick="return confirm('Are you sure?')">Delete</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

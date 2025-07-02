@@ -5,6 +5,7 @@ const Listing=require("./models/listing.js");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");
+const wrapAsync = require("./utils/wrapAsync.js");
 
 const MONGO_URL="mongodb://127.0.0.1:27017/StayNest";
 main()
@@ -44,12 +45,13 @@ app.get("/listings/:id",async(req,res)=>{
     const listing=await Listing.findById(id);
     res.render("listings/show",{listing});
 });
-app.post("/listings",async(req,res)=>{
+//Add New Listing
+app.post("/listings",wrapAsync(async(req,res)=>{
     const newListing=new Listing(req.body.listing);
     console.log(newListing);
     await newListing.save();
     res.redirect("/listings");
-});
+}));
 //Edit Route
 app.get("/listings/:id/edit",async(req,res)=>{
     let {id}=req.params;
@@ -68,6 +70,10 @@ app.delete("/listings/:id",async(req,res)=>{
     let deletedListing=await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     res.redirect("/listings");
+});
+//Error-Handling Middleware
+app.use((err,req,res,next)=>{
+    res.send("Something Went Wrong!");
 });
 // app.get("/testListing",async(req,res)=>{
 //     let sampleListing=new Listing({

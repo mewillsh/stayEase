@@ -15,7 +15,10 @@ const listingSchema = new Schema({
       set: (v) => (v === "" ? "https://iitb-wustl.org/images/banner-2.jpg" : v),
     },
   },
-  price: Number,
+  price: {
+    type: Number,
+    default: 0
+  },
   location: String,
   country: String,
 });

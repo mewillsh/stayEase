@@ -11,8 +11,8 @@ const listingSchema = new Schema({
     filename: String,
     url: {
       type: String,
-      default: "https://example.com/default-image.jpg",
-      set: (v) => (v === "" ? "https://example.com/default-image.jpg" : v),
+      default: "https://iitb-wustl.org/images/banner-2.jpg",
+      set: (v) => (v === "" ? "https://iitb-wustl.org/images/banner-2.jpg" : v),
     },
   },
   price: Number,

@@ -26,7 +26,7 @@ app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"public")));
 
-app.get("/",(req,res)=>{
+app.get("/",async(req,res)=>{
     res.send("Hi, I am root");
 });
 //Index Route
@@ -46,6 +46,7 @@ app.get("/listings/:id",async(req,res)=>{
 });
 app.post("/listings",async(req,res)=>{
     const newListing=new Listing(req.body.listing);
+    console.log(newListing);
     await newListing.save();
     res.redirect("/listings");
 });

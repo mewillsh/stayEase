@@ -1,5 +1,7 @@
 const Joi = require("joi");
 const Listing = require("./models/listing");
+const Review=require("./models/reviews");
+//At the time of passing value from Postman Use Listing[] not listing[]
 module.exports.listingSchema=Joi.object({
   Listing:Joi.object({
     title: Joi.string().required(),
@@ -13,3 +15,10 @@ module.exports.listingSchema=Joi.object({
     }).optional(),
   }).required(),
 });
+
+module.exports.reviewsSchema=Joi.object({
+  review:Joi.object({
+    rating:Joi.number().required().min(1).max(5),
+    comment: Joi.string().required(),
+  }).required()
+})

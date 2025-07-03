@@ -1,14 +1,14 @@
-const express=require("express");
-const app=express()
-const mongoose=require("mongoose");
-const Listing=require("./models/listing.js");
-const path=require("path");
-const methodOverride=require("method-override");
-const ejsMate=require("ejs-mate");
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const Listing = require("./models/listing.js");
+const Review = require("./models/reviews.js");
+const path = require("path");
+const methodOverride = require("method-override");
+const ejsMate = require("ejs-mate");
 const wrapAsync = require("./utils/wrapAsync.js");
-const ExpressError=require("./utils/ExpressError.js");
-const { listingSchema }=require("./schema.js");
-
+const ExpressError = require("./utils/ExpressError.js");
+const { listingSchema, reviewsSchema } = require("./schema.js");
 const MONGO_URL="mongodb://127.0.0.1:27017/StayNest";
 main()
     .then(()=>{
@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname,"public")));
 app.get("/",async(req,res)=>{
     res.send("Hi, I am root");
 });
-//Joi validate as middleware
+//Joi validate as middleware (Listing)
 const validateListing=(req,res,next)=>{
     let {error}=listingSchema.validate(req.body,{abortEarly:false});
     if(error){
@@ -42,6 +42,18 @@ const validateListing=(req,res,next)=>{
         next();
     }
 };
+//Joi validate as middleware (Review)
+const validateReview=(req,res,next)=>{
+    if (!req.body || !req.body.review) {
+        return next(new ExpressError(400, "Review data is missing"));
+    }
+    let {error}=reviewsSchema.validate(req.body,{abortEarly:false});
+    if(error){
+        throw new ExpressError(400,error);
+    }else{
+        next();
+    }
+}
 //Index Route
 app.get("/listings",wrapAsync (async (req,res)=>{
     const allListings=await Listing.find({});
@@ -82,6 +94,17 @@ app.delete("/listings/:id", wrapAsync(async(req,res)=>{
     let deletedListing=await Listing.findByIdAndDelete(id);
     console.log(deletedListing);
     res.redirect("/listings");
+}));
+//Review Post Route
+app.post("/listings/:id/reviews",validateReview,wrapAsync(async(req,res)=>{
+    let{id}=req.params;
+    let listing=await Listing.findById(id);
+    console.log(req.body)
+    let newReview=new Review(req.body.review);
+    listing.reviews.push(newReview);
+    await newReview.save();
+    await listing.save();
+    res.redirect(`/listings/${id}`);
 }));
 //Writing the next in this way because this is how async error handing is happend
 app.use((req, res, next) => {

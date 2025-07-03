@@ -53,14 +53,21 @@
   <% for (let review of listing.reviews) { %>
     <div class="col-md-6 mb-3">
       <div class="card shadow-sm border-0 h-100">
-        <div class="card-body p-4"> <!-- Added padding -->
-          <p class="card-text mb-3"><%= review.comment %></p>
-          <p class="mb-0 text-muted">
-            Rating: <strong><%= review.rating %></strong> 
-            <span class="text-warning">
-              <%= "★".repeat(review.rating) %><%= "☆".repeat(5 - review.rating) %>
-            </span>
-          </p>
+        <div class="card-body p-4 d-flex flex-column justify-content-between">
+          <div class="mb-3">
+            <p class="card-text"><%= review.comment %></p>
+            <p class="mb-0 text-muted">
+              Rating: <strong><%= review.rating %></strong> 
+              <span class="text-warning">
+                <%= "★".repeat(review.rating) %><%= "☆".repeat(5 - review.rating) %>
+              </span>
+            </p>
+          </div>
+          <div class="text-end mt-auto">
+            <form action="/listings/<%=listing._id%>/reviews/<%=review._id%>?_method=DELETE" method="post" >
+              <button class="btn btn-sm btn-dark">Delete</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

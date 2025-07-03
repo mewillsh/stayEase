@@ -106,6 +106,13 @@ app.post("/listings/:id/reviews",validateReview,wrapAsync(async(req,res)=>{
     await listing.save();
     res.redirect(`/listings/${id}`);
 }));
+//Delete Review Route
+app.delete("/listings/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
+    let {id,reviewId}=req.params;
+    await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
+    await Review.findByIdAndDelete(reviewId);
+    res.redirect(`/listings/${id}`);
+}))
 //Writing the next in this way because this is how async error handing is happend
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));

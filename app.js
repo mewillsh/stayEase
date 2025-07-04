@@ -1,14 +1,14 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
-const Review = require("./models/reviews.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
-const wrapAsync = require("./utils/wrapAsync.js");
 const ExpressError = require("./utils/ExpressError.js");
-const { listingSchema, reviewsSchema } = require("./schema.js");
+
+const listings=require("./routes/listings.js");
+const reviews=require("./routes/review.js");
+
 const MONGO_URL="mongodb://127.0.0.1:27017/StayNest";
 main()
     .then(()=>{
@@ -32,87 +32,9 @@ app.use(express.static(path.join(__dirname,"public")));
 app.get("/",async(req,res)=>{
     res.send("Hi, I am root");
 });
-//Joi validate as middleware (Listing)
-const validateListing=(req,res,next)=>{
-    let {error}=listingSchema.validate(req.body,{abortEarly:false});
-    if(error){
-        throw new ExpressError(400,error);
-    }
-    else{
-        next();
-    }
-};
-//Joi validate as middleware (Review)
-const validateReview=(req,res,next)=>{
-    if (!req.body || !req.body.review) {
-        return next(new ExpressError(400, "Review data is missing"));
-    }
-    let {error}=reviewsSchema.validate(req.body,{abortEarly:false});
-    if(error){
-        throw new ExpressError(400,error);
-    }else{
-        next();
-    }
-}
-//Index Route
-app.get("/listings",wrapAsync (async (req,res)=>{
-    const allListings=await Listing.find({});
-    res.render("listings/index",{allListings});
-}));
-// New Route
-app.get("/listings/new",(req,res)=>{
-    res.render("listings/new");
-});
-// Show Route
-app.get("/listings/:id", wrapAsync( async(req,res)=>{
-    let {id}=req.params;
-    const listing=await Listing.findById(id).populate("reviews");
-    res.render("listings/show",{listing});
-}));
-//Create Listing route
-app.post("/listings",validateListing, wrapAsync(async(req,res)=>{
-    const newListing=new Listing(req.body.listing);
-    console.log(newListing);
-    await newListing.save();
-    res.redirect("/listings");
-}));
-//Edit Route
-app.get("/listings/:id/edit", wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    const listing=await Listing.findById(id);
-    res.render("listings/edit",{listing});
-}));
-// //Update Route
-app.put("/listings/:id",validateListing,wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,{...req.body.listing});
-    res.redirect(`/listings/${id}`);
-}));
-// //Delete Route
-app.delete("/listings/:id", wrapAsync(async(req,res)=>{
-    let {id}=req.params;
-    let deletedListing=await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
-    res.redirect("/listings");
-}));
-//Review Post Route
-app.post("/listings/:id/reviews",validateReview,wrapAsync(async(req,res)=>{
-    let{id}=req.params;
-    let listing=await Listing.findById(id);
-    console.log(req.body)
-    let newReview=new Review(req.body.review);
-    listing.reviews.push(newReview);
-    await newReview.save();
-    await listing.save();
-    res.redirect(`/listings/${id}`);
-}));
-//Delete Review Route
-app.delete("/listings/:id/reviews/:reviewId",wrapAsync(async(req,res)=>{
-    let {id,reviewId}=req.params;
-    await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}});
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/listings/${id}`);
-}))
+
+app.use("/listings",listings);
+app.use("/listings/:id/reviews",reviews);
 //Writing the next in this way because this is how async error handing is happend
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));

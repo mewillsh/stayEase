@@ -5,6 +5,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
+const session=require("express-session");
 
 const listings=require("./routes/listings.js");
 const reviews=require("./routes/review.js");
@@ -28,13 +29,19 @@ app.use(express.urlencoded({extended:true}));//to parse data came in URL
 app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"public")));
+const sessionOptions={
+    secret:"MySecretCode",
+    resave:false,
+    saveUninitialized:true
+}
+app.use(session(sessionOptions));
 
 app.get("/",async(req,res)=>{
     res.send("Hi, I am root");
 });
 
-app.use("/listings",listings);
-app.use("/listings/:id/reviews",reviews);
+app.use("/listings",listings);  //Listing Router
+app.use("/listings/:id/reviews",reviews);  //Review Router
 //Writing the next in this way because this is how async error handing is happend
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));

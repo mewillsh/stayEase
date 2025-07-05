@@ -7,6 +7,9 @@ const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session=require("express-session");
 const flash=require("connect-flash");
+const passport=require("passport");
+const LocalStrategy=require("passport-local");
+const User=require("./models/user.js");
 
 const listings=require("./routes/listings.js");
 const reviews=require("./routes/review.js");
@@ -47,6 +50,13 @@ app.get("/",async(req,res)=>{
 
 app.use(session(sessionOptions));
 app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializedUser(User.deserializedUser());
 
 app.use((req,res,next)=>{  //if flash is triggered then it will get saved in res.locals and passed in ejs
     res.locals.successful=req.flash("success");

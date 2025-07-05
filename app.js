@@ -6,6 +6,7 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError.js");
 const session=require("express-session");
+const flash=require("connect-flash");
 
 const listings=require("./routes/listings.js");
 const reviews=require("./routes/review.js");
@@ -32,13 +33,26 @@ app.use(express.static(path.join(__dirname,"public")));
 const sessionOptions={
     secret:"MySecretCode",
     resave:false,
-    saveUninitialized:true
+    saveUninitialized:true,
+    cookie: {
+        //This cookie will persist for 7 days
+        expires:Date.now()+7*24*60*60*1000,
+        maxAge:7*24*60*60*1000,
+        httpsOnly:true
+    }
 }
-app.use(session(sessionOptions));
-
 app.get("/",async(req,res)=>{
     res.send("Hi, I am root");
 });
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use((req,res,next)=>{  //if flash is triggered then it will get saved in res.locals and passed in ejs
+    res.locals.successful=req.flash("success");
+    res.locals.failure=req.flash("failure");
+    next();
+})
 
 app.use("/listings",listings);  //Listing Router
 app.use("/listings/:id/reviews",reviews);  //Review Router

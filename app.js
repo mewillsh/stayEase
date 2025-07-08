@@ -11,8 +11,9 @@ const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
 
-const listings=require("./routes/listings.js");
-const reviews=require("./routes/review.js");
+const listingsRouter=require("./routes/listings.js");
+const reviewsRouter=require("./routes/review.js");
+const userRouter=require("./routes/user.js");
 
 const MONGO_URL="mongodb://127.0.0.1:27017/StayNest";
 main()
@@ -56,17 +57,28 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
 passport.serializeUser(User.serializeUser());
-passport.deserializedUser(User.deserializedUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use((req,res,next)=>{  //if flash is triggered then it will get saved in res.locals and passed in ejs
     res.locals.successful=req.flash("success");
     res.locals.failure=req.flash("failure");
+    res.locals.error=req.flash("error");
     next();
 })
 
-app.use("/listings",listings);  //Listing Router
-app.use("/listings/:id/reviews",reviews);  //Review Router
+// app.get("/registerUser",async(req,res)=>{
+//     let fakeUser= new User({
+//         email:"student1234@gmail.com",
+//         username:"mewillsh",
+//     });
+//     let newUser=await User.register(fakeUser,"helloworld");
+//     res.send(newUser);
+// })
+
+app.use("/listings",listingsRouter);  //Listing Router
+app.use("/listings/:id/reviews",reviewsRouter);  //Review Router
 //Writing the next in this way because this is how async error handing is happend
+app.use("/",userRouter);
 app.use((req, res, next) => {
   next(new ExpressError(404, "Page Not Found!"));
 });

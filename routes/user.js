@@ -3,6 +3,7 @@ const router=express();
 const User=require("../models/user.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const passport = require("passport");
+const { saveRedirectUrl } = require("../middleware.js");
 router.get("/signup",(req,res)=>{
   res.render("users/signup")
 });
@@ -14,9 +15,13 @@ router.post("/signup",wrapAsync( async(req,res)=>{
       username:username,
     });
     let newRigistration=await User.register(newUser,password);
-    req.flash("success","Welcome to StayNest");
-    res.redirect("/listings");
-    console.log(newRigistration);
+    req.login(newRigistration,(err)=>{
+      if(err){
+        return next(err);
+      }
+      req.flash("success","Welcome to the StayNest");
+      return res.redirect("/listings");
+    })
   }
   catch(err){
     console.log(err);
@@ -29,14 +34,15 @@ router.post("/signup",wrapAsync( async(req,res)=>{
 router.get("/login",wrapAsync(async(req,res)=>{
   res.render("users/login");
 }));
-router.post("/login",passport.authenticate("local",
+router.post("/login",saveRedirectUrl, passport.authenticate("local",
   { failureRedirect:"/login",
     failureFlash:true,
   }
 ),
   async(req,res)=>{
     req.flash("success","Welcome Back");
-    res.redirect("/listings");
+    let redirectUrl=res.locals.redirectUrl || "/listings";
+    res.redirect(redirectUrl);
   }
 )
 

@@ -63,6 +63,7 @@ app.use((req,res,next)=>{  //if flash is triggered then it will get saved in res
     res.locals.successful=req.flash("success");
     res.locals.failure=req.flash("failure");
     res.locals.error=req.flash("error");
+    res.locals.currUser=req.user;
     next();
 })
 

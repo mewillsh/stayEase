@@ -28,16 +28,18 @@ router.get("/new",isLoggedIn,(req,res)=>{
 // Show Route
 router.get("/:id", wrapAsync( async(req,res)=>{
     let {id}=req.params;
-    const listing=await Listing.findById(id).populate("reviews");
+    const listing=await Listing.findById(id).populate("reviews").populate("owner");
     if(!listing){
       req.flash("failure","Listing You requested Not Exist");
       return res.redirect("/listings");
     }
+    console.log(listing);
     res.render("listings/show",{listing});
 }));
 //Create Listing route
 router.post("/",isLoggedIn,validateListing, wrapAsync(async(req,res)=>{
     const newListing=new Listing(req.body.listing);
+    newListing.owner=req.user._id;
     console.log(newListing);
     await newListing.save();
     req.flash("success","New Listing is Created");

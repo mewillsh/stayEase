@@ -8,6 +8,7 @@
 
       <div class="show-card p-4">
         <img src="<%= listing.image.url %>" class="show-img mb-4 w-100 rounded shadow-sm" alt="listing image">
+        <p class="text-muted fs-6 mb-4">Owned By <i><%= listing.owner.username%></i></p>
         <p class="text-muted fs-6 mb-4"><%= listing.description %></p>
 
         <div class="listing-info mb-4">

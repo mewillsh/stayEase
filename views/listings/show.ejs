@@ -17,14 +17,14 @@
           <p><strong>Country:</strong> <%= listing.country %></p>
         </div>
         
-        <% if(currUser._id.equals(listing.owner._id)){%>
+
         <div class="d-flex gap-3">
           <a href="/listings/<%= listing._id %>/edit" class="btn edit-btn px-4">Edit</a>
           <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
             <button class="btn btn-outline-danger px-4" onclick="return confirm('Are you sure?')">Delete</button>
           </form>
         </div>
-      <%}%>
+
       </div>
     </div>
   </div>

@@ -1,4 +1,6 @@
 const Listing = require("../models/listing.js");
+const geocodeLocation=require("../utils/geoCoder.js");
+const axios =require("axios");
 
 module.exports.index=async (req,res)=>{
     const allListings=await Listing.find({});
@@ -12,6 +14,7 @@ module.exports.renderNewForm=async(req,res)=>{
 module.exports.showListings=async(req,res)=>{
     let {id}=req.params;
     const listing=await Listing.findById(id).populate({path:"reviews",populate:{path:"author"}}).populate("owner");
+    console.log(listing.geometry)
     if(!listing){
       req.flash("failure","Listing You requested Not Exist");
       return res.redirect("/listings");
@@ -20,19 +23,22 @@ module.exports.showListings=async(req,res)=>{
     res.render("listings/show",{listing});
 }
 
-module.exports.createListing=async(req,res)=>{
-    const newListing=new Listing(req.body.listing);
-    console.log(req.file);
-    newListing.image={
-        url:req.file.path,
-        filename:req.file.filename
-    }
-    newListing.owner=req.user._id;
-    console.log(newListing);
-    await newListing.save();
-    req.flash("success","New Listing is Created");
-    res.redirect("/listings");
-}
+module.exports.createListing = async (req, res) => {
+  const newListing = new Listing(req.body.listing);
+  if (req.file) {
+    newListing.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
+  }
+  // Use utility function here
+  newListing.geometry = await geocodeLocation(newListing.location);
+  newListing.owner = req.user._id;
+  await newListing.save();
+  req.flash("success", "New Listing is Created");
+  res.redirect("/listings");
+};
+
 
 module.exports.renderEditForm=async(req,res)=>{
     let {id}=req.params;
@@ -46,20 +52,26 @@ module.exports.renderEditForm=async(req,res)=>{
     res.render("listings/edit",{listing,originalImageUrl});
 }
 
-module.exports.updateListing=async(req,res)=>{
-    let {id}=req.params;
-    const newListing=await Listing.findByIdAndUpdate(id,{...req.body.listing});
-    console.log(req.file);
-    if(typeof req.file!=="undefined"){
-        newListing.image={
-            url:req.file.path,
-            filename:req.file.filename
-        }
-        await newListing.save();
-    }
-    req.flash("success","Listing Got Updated Successfully");
-    res.redirect(`/listings/${id}`);
-}
+module.exports.updateListing = async (req, res) => {
+  const { id } = req.params;
+  const listing = await Listing.findById(id);
+  if (!listing) {
+    req.flash("error", "Listing not found");
+    return res.redirect("/listings");
+  }
+  Object.assign(listing, req.body.listing);
+  if (req.file) {
+    listing.image = {
+      url: req.file.path,
+      filename: req.file.filename,
+    };
+  }
+  listing.geometry = await geocodeLocation(listing.location);
+  await listing.save();
+  req.flash("success", "Listing Got Updated Successfully");
+  res.redirect(`/listings/${id}`);
+};
+
 
 module.exports.destroyListing=async(req,res)=>{
     let {id}=req.params;

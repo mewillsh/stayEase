@@ -22,6 +22,17 @@ const listingSchema = new Schema({
   },
   location: String,
   country: String,
+  geometry:{
+    type:{
+      type: String,
+      enum: ['Point'],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
   reviews:[
     {
       type:Schema.Types.ObjectId,
@@ -39,6 +50,9 @@ listingSchema.post("findOneAndDelete",async(doc)=>{
     await reviews.deleteMany({_id:{$in: doc.reviews}});
   }
 });
+
+// ✅ 2dsphere index for geospatial queries
+listingSchema.index({ geometry: '2dsphere' });
 
 const Listing=mongoose.model("Listing",listingSchema);
 module.exports=Listing;

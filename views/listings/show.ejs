@@ -7,7 +7,7 @@
     <div class="col-md-10 col-lg-8">
       <div class="show-card p-4">
         <img src="<%= listing.image.url %>" class="show-img mb-4 w-100 rounded shadow-sm" alt="listing image">
-        <p class="text-muted fs-6 mb-4">Owned By <i><%= listing.owner.username%></i></p>
+        <p class="text-muted fs-6 mb-4">Owned By <i><%= listing.owner.username %></i></p>
         <p class="text-muted fs-6 mb-4"><%= listing.description %></p>
 
         <div class="listing-info mb-4">
@@ -99,4 +99,28 @@
     </div>
     <% } %>
   </div>
+
+  <!-- Map Section -->
+  <div id="map" style="height: 400px; width: 100%;" class="rounded mb-4"></div>
+
+  <% if (listing.geometry && Array.isArray(listing.geometry.coordinates) && listing.geometry.coordinates.length === 2) { %>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const coords = [<%= listing.geometry.coordinates[1] %>, <%= listing.geometry.coordinates[0] %>]; // [lat, lng]
+
+        const map = L.map('map').setView(coords, 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        L.marker(coords).addTo(map)
+          .bindPopup('<b><%= listing.title %></b><br><%= listing.location %>')
+          .openPopup();
+      });
+    </script>
+  <% } else { %>
+    <p>No location data available.</p>
+  <% } %>
+
 </div>

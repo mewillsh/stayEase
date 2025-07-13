@@ -12,6 +12,11 @@
       <label for="description" class="form-label">Description</label><textarea name="listing[description]" type="text" class="form-control" required><%=listing.description%></textarea>
       <div class="invalid-feedback">Please Enter Valid Description</div>
     </div>
+    <!-- for image Preview -->
+    <div class="mb-3">
+      <p>Original Listing Image</p>
+      <img src=<%=originalImageUrl%>>
+    </div>
     <div class="mb-3">
       <label for="image" class="form-label">Image-URL</label>
       <input type="file" name="listing[image][url]" class="form-control">

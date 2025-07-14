@@ -18,7 +18,7 @@ const listingsRouter=require("./routes/listings.js");
 const reviewsRouter=require("./routes/review.js");
 const userRouter=require("./routes/user.js");
 
-const MONGO_URL="mongodb://127.0.0.1:27017/StayNest";
+const dbUrl=process.env.ATLASDB_URL;
 main()
     .then(()=>{
         console.log("Connect to DB");
@@ -28,7 +28,7 @@ main()
     });
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(dbUrl);
 }
 
 app.set("view engine","ejs"); //for setting ejs view engine

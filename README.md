@@ -6,7 +6,7 @@
 
 ### 🌐 Live Site
 
-🔗 [Visit StayEase](https://stayease-ju1z.onrender.com)
+🔗 [Visit StayEase](https://stayease-ju1z.onrender.com/listings)
 
 ---
 

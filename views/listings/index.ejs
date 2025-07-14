@@ -1,6 +1,91 @@
 <% layout("layouts/boilerplate") %>
-<h3>All Listings</h3>
-<div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g-4">
+
+<style>
+ #filters{
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+ }
+ .filter{
+  text-align: center;
+  margin-left: 2rem;
+  margin-top: 1rem;
+  opacity: 0.7;
+ }
+ .filter:hover{
+  opacity: 1;
+  cursor: pointer;
+ }
+ .filter p{
+  font-size: 0.8rem;
+ }
+ .tax-info{
+  display: none;
+ }
+ .tax-toggle{
+  border: 1px solid black;
+  border-radius: 1rem;
+  height: 3.25;
+  padding: 1rem;
+  margin-left: 7rem;
+ }
+</style>
+
+<div id="filters">
+
+  <div class="filter">
+    <div><i class="fa-solid fa-fire"></i></div>
+    <p>Trending</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-house-user"></i></div>
+    <p>Rooms</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-mountain-city"></i></div>
+    <p>Iconic Cities</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-mountain"></i></div>
+    <p>Mountains</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-chess-rook"></i></div>
+    <p>Castle</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-person-swimming"></i></div>
+    <p>Amazing Pools</p>
+  </div>
+   <div class="filter">
+    <div><i class="fa-solid fa-campground"></i></div>
+    <p>Campings</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-wheat-awn"></i></div>
+    <p>Farms</p>
+  </div>
+   <div class="filter">
+    <div><i class="fa-solid fa-snowman"></i></div>
+    <p>Arctic</p>
+  </div>
+  <div class="filter">
+    <div><i class="fa-solid fa-igloo"></i></div>
+    <p>Domes</p>
+  </div>
+   <div class="filter">
+    <div><i class="fa-solid fa-ship"></i></div>
+    <p>Boats</p>
+  </div>
+  <div class="tax-toggle">
+    <div class="form-check-reverse form-switch">
+      <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+      <label class="form-check-label" for="flexSwitchCheckDefault">Display total after taxes</label>
+    </div>
+  </div>
+
+</div>
+<div class="row row-cols-lg-3 row-cols-md-2 row-cols-1 g-4 mt-1">
   <% for(let listing of allListings) { %>
     <div class="col">
       <div class="card h-100">
@@ -8,7 +93,8 @@
         <div class="card-img-overlay"></div>
         <div class="card-body">
           <h5 class="card-title"><b><%= listing.title %></b></h5>
-          <p class="card-text">&#8377;<%= listing.price.toLocaleString("en-IN") %> / night</p>
+          <span class="card-text">&#8377;<%= listing.price.toLocaleString("en-IN") %> / night</span>
+          <i class="tax-info"> &nbsp;&nbsp; +18% GST</i>
            <!-- Stretched anchor link -->
            <a href="/listings/<%= listing._id %>" class="stretched-link"></a>
         </div>
@@ -16,3 +102,17 @@
     </div>
   <% } %>
 </div>
+
+<script>
+  let taxSwitch=document.getElementById("flexSwitchCheckDefault");
+  taxSwitch.addEventListener("click",()=>{
+    let taxInfo=document.getElementsByClassName("tax-info");
+    for(info of taxInfo){
+      if(info.style.display!="inline"){
+        info.style.display="inline";
+      }else{
+        info.style.display="none";
+      }
+    }
+  });
+</script>

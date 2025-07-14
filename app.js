@@ -48,9 +48,6 @@ const sessionOptions={
         httpsOnly:true
     }
 }
-app.get("/",async(req,res)=>{
-    res.send("Hi, I am root");
-});
 
 app.use(session(sessionOptions));
 app.use(flash());

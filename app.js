@@ -3,6 +3,7 @@ if(process.env.NODE_ENV != "production"){
 }
 const express = require("express");
 const app = express();
+const PORT = process.env.PORT || 8080;
 const mongoose = require("mongoose");
 const path = require("path");
 const methodOverride = require("method-override");
@@ -87,7 +88,9 @@ app.use((req,res,next)=>{  //if flash is triggered then it will get saved in res
 //     let newUser=await User.register(fakeUser,"helloworld");
 //     res.send(newUser);
 // })
-
+app.get("/", (req, res) => {
+  res.send("Homepage working!");
+});
 app.use("/listings",listingsRouter);  //Listing Router
 app.use("/listings/:id/reviews",reviewsRouter);  //Review Router
 //Writing the next in this way because this is how async error handing is happend
@@ -114,6 +117,6 @@ app.use((err,req,res,next)=>{
 //     console.log("Sample was saved");
 //     res.send("Successful testing");
 // }) 
-app.listen(8080,()=>{
-    console.log("Server is listning is port 8080");
+app.listen(PORT,()=>{
+    console.log(`Server is listning is port ${PORT}`);
 });

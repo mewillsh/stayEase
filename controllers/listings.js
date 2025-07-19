@@ -2,10 +2,16 @@ const Listing = require("../models/listing.js");
 const geocodeLocation=require("../utils/geoCoder.js");
 const axios =require("axios");
 
-module.exports.index=async (req,res)=>{
-    const allListings=await Listing.find({});
-    res.render("listings/index",{allListings});
-}
+module.exports.index = async (req, res) => {
+  const { category } = req.query;
+  let allListings;
+  if (category) {
+    allListings = await Listing.find({ category });
+  } else {
+    allListings = await Listing.find({});
+  }
+  res.render("listings/index", { allListings, category });
+};
 
 module.exports.renderNewForm=async(req,res)=>{
     res.render("listings/new");
@@ -53,24 +59,44 @@ module.exports.renderEditForm=async(req,res)=>{
 }
 
 module.exports.updateListing = async (req, res) => {
-  const { id } = req.params;
-  const listing = await Listing.findById(id);
-  if (!listing) {
-    req.flash("error", "Listing not found");
-    return res.redirect("/listings");
+  try {
+    const { id } = req.params;
+
+    const listing = await Listing.findById(id);
+    if (!listing) {
+      req.flash("error", "Listing not found");
+      return res.redirect("/listings");
+    }
+
+    // Merge form data
+    const updatedData = req.body.listing;
+    Object.assign(listing, updatedData);
+
+    // Handle image update if new image is uploaded
+    if (req.file) {
+      listing.image = {
+        url: req.file.path,
+        filename: req.file.filename,
+      };
+    }
+
+    // Update geolocation based on new location input
+    if (updatedData.location !== listing.location) {
+      listing.geometry = await geocodeLocation(updatedData.location);
+    }
+
+    await listing.save();
+
+    req.flash("success", "Listing got updated successfully");
+    res.redirect(`/listings/${id}`);
+
+  } catch (error) {
+    console.error("Update Error:", error);
+    req.flash("error", "Something went wrong during update");
+    res.redirect("/listings");
   }
-  Object.assign(listing, req.body.listing);
-  if (req.file) {
-    listing.image = {
-      url: req.file.path,
-      filename: req.file.filename,
-    };
-  }
-  listing.geometry = await geocodeLocation(listing.location);
-  await listing.save();
-  req.flash("success", "Listing Got Updated Successfully");
-  res.redirect(`/listings/${id}`);
 };
+
 
 
 module.exports.destroyListing=async(req,res)=>{

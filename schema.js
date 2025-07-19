@@ -2,17 +2,25 @@ const Joi = require("joi");
 const Listing = require("./models/listing");
 const Review=require("./models/reviews");
 //At the time of passing value from Postman Use Listing[] not listing[]
-module.exports.listingSchema=Joi.object({
-  listing:Joi.object({
+module.exports.listingSchema = Joi.object({
+  listing: Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required(),
-    location:Joi.string().required(),
-    country:Joi.string().required(),
-    price:Joi.number().required().min(0),
-    image:Joi.object({
-      filename:Joi.string().allow("",null),
-      url:Joi.string().allow("",null),
+    image: Joi.object({
+      url: Joi.string().uri().allow("", null),
+      filename: Joi.string().allow("", null),
     }).optional(),
+    price: Joi.number().required().min(0),
+    location: Joi.string().required(),
+    country: Joi.string().required(),
+    category: Joi.string().required(),
+    geometry: Joi.object({
+      type: Joi.string().valid("Point").required(),
+      coordinates: Joi.array()
+        .items(Joi.number()) // [longitude, latitude]
+        .length(2)
+        .required(),
+    }).optional(), // optional if you're not passing it from frontend/postman
   }).required(),
 });
 

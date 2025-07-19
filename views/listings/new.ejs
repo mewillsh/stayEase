@@ -2,45 +2,67 @@
 <div class="row">
   <div class="col-8 offset-2">
     <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
+    
     <div class="mb-3">
       <label for="title" class="form-label">Title</label>
       <input name="listing[title]" placeholder="enter title" type="text" class="form-control" required>
       <div class="invalid-feedback">Please Enter Name</div>
     </div>
+
     <div class="mb-3">
       <label for="description" class="form-label">Description</label>
-      <textarea name="listing[description]" placeholder="enter description" type="text" class="form-control" required></textarea>
+      <textarea name="listing[description]" placeholder="enter description" class="form-control" required></textarea>
       <div class="invalid-feedback">Please Enter Valid Description</div>
     </div>
-    <!-- <div class="mb-3">
-      <label for="image" class="form-label">Image</label>
-      <input type="text" name="listing[image][url]" placeholder="Enter Image Link/Url" class="form-control">
-    </div> -->
+
     <div class="mb-3">
       <label for="image" class="form-label">Upload Listing Image</label>
-      <input type="file" name="listing[image][url]" placeholder="Enter Image Link/Url" class="form-control" required>
+      <input type="file" name="listing[image][url]" class="form-control" required>
     </div>
+
     <div class="row">
       <div class="mb-3 col-md-4">
-      <label for="price" class="form-label">Price</label>
-       <input name="listing[price]" placeholder="enter price" class="form-control" type="number" required>
-       <div class="invalid-feedback">Please Enter Valid Number</div>
+        <label for="price" class="form-label">Price</label>
+        <input name="listing[price]" placeholder="enter price" class="form-control" type="number" required>
+        <div class="invalid-feedback">Please Enter Valid Number</div>
       </div>
       <div class="mb-3 col-md-8">
-      <label for="country" class="form-label">Country</label>
-      <input name="listing[country]" placeholder="enter country" type="text" class="form-control" required>
-      <div class="invalid-feedback">Enter Valid Country Name</div>
+        <label for="country" class="form-label">Country</label>
+        <input name="listing[country]" placeholder="enter country" type="text" class="form-control" required>
+        <div class="invalid-feedback">Enter Valid Country Name</div>
+      </div>
     </div>
-    </div>
+
     <div class="mb-3">
       <label for="location" class="form-label">Location</label>
       <input name="listing[location]" placeholder="enter location" type="text" class="form-control" required>
       <div class="invalid-feedback">Please Enter Valid Location</div>
     </div>
+
+    <!-- ✅ Category Dropdown -->
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <select name="listing[category]" class="form-select" required>
+        <option value="" disabled selected>Select category</option>
+        <option value="Trending">Trending</option>
+        <option value="Rooms">Rooms</option>
+        <option value="Iconic Cities">Iconic Cities</option>
+        <option value="Mountains">Mountains</option>
+        <option value="Castle">Castle</option>
+        <option value="Amazing Pools">Amazing Pools</option>
+        <option value="Campings">Campings</option>
+        <option value="Farms">Farms</option>
+        <option value="Arctic">Arctic</option>
+        <option value="Domes">Domes</option>
+        <option value="Boats">Boats</option>
+      </select>
+      <div class="invalid-feedback">Please select a category</div>
+    </div>
+
     <div class="mb-3">
       <button class="btn btn-dark add-btn">Add</button>
     </div>
-  </form>
+
+    </form>
   </div>
 </div>
-  
